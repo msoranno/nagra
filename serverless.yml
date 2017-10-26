@@ -22,9 +22,8 @@ functions:
     package:
       exclude:
         # we exclude the vitualenv dierectory
-        - ./**
-      include:
-        - requester.py
+        #- ./**
+        - 'venv/**'
     events:
       - http:
           path: playme
@@ -62,3 +61,6 @@ functions:
 #       Properties:
 #         BucketName: nagra-omdb
 #         AccessControl: 'PublicReadWrite'
+
+plugins:
+  - serverless-python-requirements

@@ -10,15 +10,13 @@ provider:
 functions:
   requesterFunc:
     handler: requester.omdbrequest
-    plugins:
-      - serverless-python-requirements
     custom:
       pythonRequirements:
         #for non-linux envs
         dockerizePip: true
         #for compress libraries
         zip: true
-        fileName: requirements_requester.txt
+        fileName: requirements_req.txt
     package:
       exclude:
         # we exclude the vitualenv dierectory
@@ -30,15 +28,13 @@ functions:
           method: get
   handlerFunc:
     handler: handler.jsonToCsv
-    plugins:
-      - serverless-python-requirements
     custom:
       pythonRequirements:
         #for non-linux envs
         dockerizePip: true
         #for compress libraries
         zip: true
-        fileName: requirements.txt
+        fileName: requirements_han.txt
     package:
       exclude:
         # we exclude the vitualenv dierectory
@@ -50,8 +46,8 @@ functions:
           rules:
             - prefix: jsonFolder
             - suffix: .json 
-
-
+plugins:
+  - serverless-python-requirements
 
 
 # resources:
@@ -61,6 +57,3 @@ functions:
 #       Properties:
 #         BucketName: nagra-omdb
 #         AccessControl: 'PublicReadWrite'
-
-plugins:
-  - serverless-python-requirements

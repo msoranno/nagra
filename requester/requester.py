@@ -1,9 +1,10 @@
-try:
-  import unzip_requirements
-except ImportError:
-  pass
+# try:
+#   import unzip_requirements
+# except ImportError:
+#   pass
 
-import json, requests
+import json
+import lib.requests
 import urllib.parse
 import boto3
 import os

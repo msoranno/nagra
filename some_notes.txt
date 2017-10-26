@@ -1,0 +1,28 @@
+sudo apt-get install python3-pip
+sudo pip3 install virtualenv
+sudo pip install --upgrade pip
+virtualenv venv --python=python3
+source venv/bin/activate
+pip install pandas
+pip install requests
+pip freeze > requirements_han.txt
+pip freeze > requirements_req.txt
+cat requirements.txt
+npm init
+npm install --save serverless-python-requirements
+npm install serverless-python-individually
+serverless deploy
+serverless deploy function --function nagraF1
+
+pip install pandas
+pip install requests
+virtualenv venv --python=python3
+source venv/bin/activate
+npm install serverless-python-individually
+
+
+- Usando el plugin serverless-python-individually, todo pasa por separar las funciones por directorios
+- Cada directorio contiene el py de la función, un directorio lib para los modulos pip y el fichero requirementes.txt
+- hay que adaptar el serverless.yml para darles las rutas apropiadas.
+- para instalar librerias dentro de cada lib, nos paramos en la ubicación y hacemos:
+    pip install paquete -t .

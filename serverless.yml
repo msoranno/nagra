@@ -2,6 +2,8 @@ service: nagraJsonToCsv
 package:
   #to include or exclude individually on the functions
   individually: true
+  exclude:
+    - '**/*'
 provider:
   name: aws
   runtime: python3.6
@@ -9,36 +11,19 @@ provider:
   region: eu-central-1
 functions:
   requesterFunc:
-    handler: requester.omdbrequest
-    custom:
-      pythonRequirements:
-        #for non-linux envs
-        dockerizePip: true
-        #for compress libraries
-        zip: true
-        fileName: requirements_req.txt
+    handler: requester/requester.omdbrequest
     package:
-      exclude:
-        # we exclude the vitualenv dierectory
-        #- ./**
-        - 'venv/**'
+      include:
+        - requester/**
     events:
       - http:
           path: playme
           method: get
   handlerFunc:
-    handler: handler.jsonToCsv
-    custom:
-      pythonRequirements:
-        #for non-linux envs
-        dockerizePip: true
-        #for compress libraries
-        zip: true
-        fileName: requirements_han.txt
+    handler: handler/handler.jsonToCsv
     package:
-      exclude:
-        # we exclude the vitualenv dierectory
-        - 'venv/**'
+      include:
+        - handler/**
     events:
       - s3:
           bucket: nagra-omdb
@@ -46,8 +31,17 @@ functions:
           rules:
             - prefix: jsonFolder
             - suffix: .json 
+
+custom:
+  pyIndividually:
+    wrap:handlerFunc: handler/handler.jsonToCsv
+    wrap:requesterFunc: requester/requester.omdbrequest
+    dockerizedPip: True
+
+
 plugins:
-  - serverless-python-requirements
+  #- serverless-python-requirements
+  - serverless-python-individually
 
 
 # resources:

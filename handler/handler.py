@@ -2,16 +2,16 @@
 # serverless.yml contains  zip:true
 # uncompress dependencies compressed before
 #------
-try:
-  import unzip_requirements
-except ImportError:
-  pass
+# try:
+#   import unzip_requirements
+# except ImportError:
+#   pass
 
 import json
 import urllib.parse
 import boto3
 import os
-import pandas as pd
+import lib.pandas as pd
 import datetime
 import io
 

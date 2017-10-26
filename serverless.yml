@@ -10,6 +10,15 @@ provider:
 functions:
   requesterFunc:
     handler: requester.omdbrequest
+    plugins:
+      - serverless-python-requirements
+    custom:
+      pythonRequirements:
+        #for non-linux envs
+        dockerizePip: true
+        #for compress libraries
+        zip: true
+        fileName: requirements_requester.txt
     package:
       exclude:
         # we exclude the vitualenv dierectory
@@ -30,6 +39,7 @@ functions:
         dockerizePip: true
         #for compress libraries
         zip: true
+        fileName: requirements.txt
     package:
       exclude:
         # we exclude the vitualenv dierectory

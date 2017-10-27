@@ -9,9 +9,15 @@ provider:
   runtime: python3.6
   stage: dev
   region: eu-central-1
+  iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "s3:ListBucket"
+          - "s3:PutObject"
+        Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }  
 functions:
   requesterFunc:
-    handler: requester/requester.omdbrequest
+    handler: requester/wrap.handler
     package:
       include:
         - requester/**
@@ -20,7 +26,7 @@ functions:
           path: playme
           method: get
   handlerFunc:
-    handler: handler/handler.jsonToCsv
+    handler: handler/wrap.handler
     package:
       include:
         - handler/**
@@ -34,13 +40,14 @@ functions:
 
 custom:
   pyIndividually:
-    wrap:handlerFunc: handler/handler.jsonToCsv
-    wrap:requesterFunc: requester/requester.omdbrequest
+    wrap:handlerFunc: handler/handler.jsonToCsv          # real handler
+    wrap:requesterFunc: requester/requester.omdbrequest  # real handler
     dockerizedPip: True
 
 
 plugins:
   #- serverless-python-requirements
+  # https://www.npmjs.com/package/serverless-python-individually
   - serverless-python-individually
 
 

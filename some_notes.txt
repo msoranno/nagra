@@ -30,6 +30,8 @@ npm install serverless-python-individually
 - Los paquetes externos hay que meterlos dentro del directorio lib.
 - para instalar librerias dentro de cada lib, nos paramos en la ubicación y hacemos:
     pip install paquete -t .
+- estamos trabajando sin virtualenv directamente desde s.o, así que tanto el pandas como el requests han sido instalados directamente 
+  en el directorio lib de cada funcion, con el fichero de requeriments de cada funcion.
 
 
 ?movie=friends

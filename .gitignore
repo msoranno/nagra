@@ -24,3 +24,4 @@ venv/
 
 # Serverless directories
 .serverless
+serverless.env.yml

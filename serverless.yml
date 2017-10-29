@@ -1,3 +1,18 @@
+#----------------------------------------------------------
+# - This file deploy 1 service and 2 functions.
+# - Some variables are defined in the environment section but others on the serverless.env.yml file.
+# - requesterFunc : this function interactn with the omdb api and create json files on a bucket. This function react to a http-GET event.
+# - handlerFunc   : this function react to new objects created on bucket, and convert the file from json to csv on a different folder.
+# - Plugins used:
+#   serverless-python-individually: this plugin allow us to include specific requirements to each function.
+# - Resource created:
+#   - 1 bucket
+#   - 1 iam role
+#   - 2 lambdas
+#
+#---------------------------------------------------------
+
+
 service: nagraJsonToCsv 
 package:
   #to include or exclude individually on the functions
@@ -9,15 +24,27 @@ provider:
   runtime: python3.6
   stage: dev
   region: eu-central-1
-  iamRoleStatements:
-      - Effect: "Allow"
-        Action:
-          - "s3:ListBucket"
-          - "s3:PutObject"
-        Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }  
+  memorySize: 128
+  environment:
+    #------------------------------------------------------
+    # serverless.env.yml will not go to git repo.
+    # The file has this format
+    # dev:
+    #   KEY_OMDB: 'someKey'
+    #   BUCKET_NAME: nagra-omdb
+    #   JSON_BUCKET_KEY: jsonFolder
+    #   CVS_BUCKET_KEY: cvsHere
+    #   OMDB_URL: 'http://www.omdbapi.com'
+    #-------------------------------------------------------
+    BUCKET_NAME: ${file(./serverless.env.yml):dev.BUCKET_NAME}
+    JSON_BUCKET_KEY: ${file(./serverless.env.yml):dev.JSON_BUCKET_KEY}
+    CVS_BUCKET_KEY: ${file(./serverless.env.yml):dev.CVS_BUCKET_KEY}
+    OMDB_URL: ${file(./serverless.env.yml):dev.OMDB_URL}
+    OMDB_KEY: ${file(./serverless.env.yml):dev.KEY_OMDB} 
 functions:
   requesterFunc:
-    handler: requester/wrap.handler
+    role: s3bucketRole
+    handler: requester/wrap.handler #wrap.handler will be created by serverless-python-individually
     package:
       include:
         - requester/**
@@ -26,19 +53,27 @@ functions:
           path: playme
           method: get
   handlerFunc:
-    handler: handler/wrap.handler
+    role: s3bucketRole
+    handler: handler/wrap.handler  #wrap.handler will be created by serverless-python-individually
     package:
       include:
         - handler/**
     events:
       - s3:
-          bucket: nagra-omdb
+          bucket: ${file(./serverless.env.yml):dev.BUCKET_NAME}
           event: s3:ObjectCreated:*
           rules:
-            - prefix: jsonFolder
+            - prefix: ${file(./serverless.env.yml):dev.JSON_BUCKET_KEY}
             - suffix: .json 
 
 custom:
+  remover:
+    buckets:
+      #-------
+      # WARNING: this will remove all objects inside the bucket after "sls remove"
+      #          Remove this in PROD.
+      #-------
+      - ${file(./serverless.env.yml):dev.BUCKET_NAME}
   pyIndividually:
     wrap:handlerFunc: handler/handler.jsonToCsv          # real handler
     wrap:requesterFunc: requester/requester.omdbrequest  # real handler
@@ -49,12 +84,37 @@ plugins:
   #- serverless-python-requirements
   # https://www.npmjs.com/package/serverless-python-individually
   - serverless-python-individually
+  # https://github.com/sinofseven/serverless-s3-remover
+  - serverless-s3-remover
 
 
-# resources:
-#   Resources:
-#     S3BucketOmdbBucket:
-#       Type: AWS::S3::Bucket
-#       Properties:
-#         BucketName: nagra-omdb
-#         AccessControl: 'PublicReadWrite'
+resources:
+  Resources:
+    #--------------------------------
+    # This is a very permisive Role
+    #--------------------------------
+    s3bucketRole:
+          Type: AWS::IAM::Role
+          Properties:
+            Path: /
+            RoleName: Lambda-nagra
+            AssumeRolePolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Principal:
+                    Service:
+                      - lambda.amazonaws.com
+                  Action: sts:AssumeRole
+            Policies:
+              - PolicyName: AWSLambdaNagra
+                PolicyDocument:
+                  Version: '2012-10-17'
+                  Statement:
+                    - Effect: Allow 
+                      Action:
+                        - logs:*
+                        - events:*
+                        - lambda:*
+                        - s3:*
+                      Resource: "*"

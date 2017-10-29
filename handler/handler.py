@@ -1,6 +1,27 @@
+#---------------------------
+#---------------------------
+# - Has requested this function react over a S3PutObject event and create another object in csv format.
+# - Uses Pandas Library
+# - As configured in serverless.yml this function is triggered only when a .json file is created in a specific folder.
+# - e.g Input:
+#   rocky.json
+# - e.g Output(dateTime includded):
+#   rocky.2017-10-2919.00.51.240533.csv
+#
+# Serverless cheat:
+# Print output:
+# sls logs -f handlerFunc -t
+# Redeploy only this function:
+# sls deploy function -f handlerFunc
+#---------------------------
+#---------------------------
+
+
+
 #-------
 # serverless.yml contains  zip:true
 # uncompress dependencies compressed before
+# pulgin: serverless-python-requirements
 #------
 # try:
 #   import unzip_requirements
@@ -30,7 +51,7 @@ def jsonToCsv(event, context):
     key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
 
     #getting a valid filename key for cvs
-    csv_s3_store='cvsHere'
+    csv_s3_store = os.environ['CVS_BUCKET_KEY'] #defined in serverless.yml
     just_file = key.split('/')[1]
     just_file_noExt = just_file.split('.json')[0]
     csv_file = just_file_noExt + '.' + get_NOW() + '.csv'

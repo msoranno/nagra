@@ -1,4 +1,4 @@
-# From json to csv project
+# From json to csv project (Serverless + lambda + S3 bucket)
 
 ## What is this ?
 - The general idea is to convert .json to .csv files working on s3 bucket.

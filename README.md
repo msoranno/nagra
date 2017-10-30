@@ -52,3 +52,24 @@ Two lambda functions will be created: requester and handler.
     - serverless or simple sls
 - Give aws credential to your serverless 
   - sls config credentials --provider aws --key YOURKEY --secret YOURSECRET
+- Clone this repo
+  - git clone https://github.com/msoranno/nagra.git
+- Go into nagra directory
+  - create the environment file called serverless.env.yml, and put this content (modifiy the content)
+    ```
+    dev:
+    KEY_OMDB: 'ecd349ff'
+    BUCKET_NAME: nagra-omdb
+    JSON_BUCKET_KEY: jsonFolder
+    CVS_BUCKET_KEY: csvHere
+    OMDB_URL: 'http://www.omdbapi.com'
+    ```
+    - where:
+      - KEY_OMDB: is the key to access to the omdb api, you received this after register to the service.
+      - BUCKET_NAME: The bucket name to work with
+      - JSON_BUCKET_KEY: place to the json files
+      - CVS_BUCKET_KEY: place to the csv files
+      - OMDB_URL: pretty clear.
+
+
+  

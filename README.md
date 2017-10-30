@@ -58,7 +58,7 @@ Two lambda functions will be created: requester and handler.
   - create the environment file called serverless.env.yml, and put this content (modifiy the content)
     ```
     dev:
-    KEY_OMDB: 'ecd349ff'
+    KEY_OMDB: 'YOUR-OMDB-KEY-HERE'
     BUCKET_NAME: nagra-omdb
     JSON_BUCKET_KEY: jsonFolder
     CVS_BUCKET_KEY: csvHere
@@ -70,6 +70,19 @@ Two lambda functions will be created: requester and handler.
       - JSON_BUCKET_KEY: place to the json files
       - CVS_BUCKET_KEY: place to the csv files
       - OMDB_URL: pretty clear.
+   - At this point your nagra directory should have this content:
+     ```
+      README.md
+      handler
+      .gitignore
+      some_notes.txt
+      serverless.yml
+      requester
+      node_modules
+      .git
+      serverless.env.yml
+     ```
+   - TO BE CONTINUE.....
 
 
   

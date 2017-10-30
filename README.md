@@ -43,3 +43,12 @@ Two lambda functions will be created: requester and handler.
 
 
 ## How to use it ?
+### Serverless framework
+- Install nodeJs v6.X
+- Install npm
+- with npm install serverless
+  sudo npm install -g serverless
+  - Now you can call serverless cli by doing
+    - serverless or simple sls
+- Give aws credential to your serverless 
+  - sls config credentials --provider aws --key YOURKEY --secret YOURSECRET
